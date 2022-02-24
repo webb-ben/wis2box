@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  jupyter:
+    container_name: jupyter
+    # image: scioquiver/notebooks:cgspatial-notebook
+    build:
+      context: ./jupyter
+    volumes:
+      - ../docs/source/data-access:/home/jovyan/work/data-access
+    ports:
+      - 8888:8888

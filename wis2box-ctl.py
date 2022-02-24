@@ -25,9 +25,12 @@ import os
 import subprocess
 import sys
 
-DOCKER_COMPOSE_ARGS = """
-    -f docker/docker-compose.yml
-    -f docker/docker-compose.override.yml
+CUR_DIR = os.path.abspath(os.curdir)
+
+DOCKER_COMPOSE_ARGS = f"""
+    -f {CUR_DIR}/docker/docker-compose.yml
+    -f {CUR_DIR}/docker/docker-compose.override.yml
+    -f {CUR_DIR}/docker/docker-compose.jupyter.yml
     --env-file dev.env
     -p wis2box_project
     """
