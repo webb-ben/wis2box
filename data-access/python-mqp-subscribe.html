@@ -1,0 +1,496 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Python MQP Subscribe &#8212; wis2box 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nature.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="https://public.wmo.int/sites/all/themes/wmo/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Extending wis2box" href="../extending-wis2box.html" />
+    <link rel="prev" title="R" href="R.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../extending-wis2box.html" title="Extending wis2box"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="R.html" title="R"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">wis2box 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Data access</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Python MQP Subscribe</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Python-MQP-Subscribe">
+<h1>Python MQP Subscribe<a class="headerlink" href="#Python-MQP-Subscribe" title="Permalink to this headline">¶</a></h1>
+<p>This example will use widely available and used python language and libraries to download some announcements, and then retrieve the corresponding data, using only the paho.mqtt.client library, in addition to standard libraries.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">paho.mqtt.client</span> <span class="k">as</span> <span class="nn">mqtt</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+
+<span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span>
+<span class="n">user</span><span class="o">=</span><span class="s1">&#39;wis2box&#39;</span>
+<span class="n">password</span><span class="o">=</span><span class="s1">&#39;wis2box&#39;</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">()</span>
+<span class="n">clientId</span><span class="o">=</span><span class="s1">&#39;MyQueueName&#39;</span><span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="c1"># number of messages to subscribe to.</span>
+<span class="n">messageCount</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">messageCountMaximum</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c1"># maximum size of data download to print.</span>
+<span class="n">sizeMaximumThreshold</span> <span class="o">=</span> <span class="mi">1023</span>
+</pre></div>
+</div>
+</div>
+<p>The above imports the modules we need. Assuming localhost is set up and is publishing messages. Message queueing protocols provide real-time notification about availability of products.</p>
+<p>The standard python library used to subscribe to messages is paho.mqtt.client. The library uses callbacks.</p>
+<p>The first callback needed is called when the connection is established, which is when we need to subscribe to topics we are interested in (topics are: ‘xpublic/#’, where / is a topic separator and # is a wildcard for any tree of topics.</p>
+<p>The qos=1 refers to Quality of Service. 1 establishes that we want to receive messages at least once. qos==1 is recommended.</p>
+<p>messageCount is used to limit the length of the demonstration (otherwise infinite, as it is a continuous flow.)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sub_connect</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;on connection to subscribe:&quot;</span><span class="p">,</span> <span class="n">mqtt</span><span class="o">.</span><span class="n">connack_string</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;xpublic/#&quot;</span> <span class="p">]:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span> <span class="n">s</span> <span class="p">,</span> <span class="n">qos</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<p>The second callback needed is called every time a message is received. The message is decoded and printed. to keep the output short for the demonstration, we limit the subscriber to a few messages.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sub_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">      print messages received.  Exit on count received.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">messageCount</span><span class="p">,</span><span class="n">messageCountMaximum</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;message </span><span class="si">{</span><span class="n">messageCount</span><span class="si">}</span><span class="s2"> received: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;message </span><span class="si">{</span><span class="n">messageCount</span><span class="si">}</span><span class="s2"> data: </span><span class="si">{</span><span class="n">getData</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">)</span>
+    <span class="n">messageCount</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">messageCount</span> <span class="o">&gt;</span> <span class="n">messageCountMaximum</span><span class="p">:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">loop_stop</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<p>The message handler above calls getData(). The messages themselves are usually announcements of data availability, but when data is small, they can include the data itself in the <em>content</em> field. Usually the message refer to the data using a link. Here is a routine to obtain the data given an announcement message:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sizeMaximum</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">      given a message, return the data it refers to</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;size&#39;</span> <span class="ow">in</span> <span class="n">m</span> <span class="ow">and</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">sizeMaximum</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot; data too large </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+    <span class="k">elif</span> <span class="s1">&#39;content&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">][</span><span class="s1">&#39;encoding&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;base64&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;baseUrl&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;relPath&#39;</span><span class="p">]</span>
+        <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>The mainline registers the callbacks, connects to the broker, and starts the event loop:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">mqtt</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span> <span class="n">client_id</span><span class="o">=</span><span class="n">clientId</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">mqtt</span><span class="o">.</span><span class="n">MQTTv5</span> <span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">on_connect</span> <span class="o">=</span> <span class="n">sub_connect</span>
+<span class="n">client</span><span class="o">.</span><span class="n">on_message</span> <span class="o">=</span> <span class="n">sub_message</span>
+<span class="n">client</span><span class="o">.</span><span class="n">username_pw_set</span><span class="p">(</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span> <span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span> <span class="n">host</span> <span class="p">)</span>
+
+<span class="n">client</span><span class="o">.</span><span class="n">loop_forever</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+on connection to subscribe: Connection Accepted.
+message 0 received: {&#39;mode&#39;: &#39;664&#39;, &#39;mtime&#39;: &#39;20220223T151525.659682751&#39;, &#39;atime&#39;: &#39;20220223T151525.659682751&#39;, &#39;pubTime&#39;: &#39;20220223T151525.662858&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/miscellaneous/ca/SXCN40_KWAL_231515_cdc91d9dfcc6fc948913638a06ae8113.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;zckdnfzG/JSJE2OKBq6BEw==&#39;}, &#39;size&#39;: 125}
+message 0 data: b&#39;SXCN40 KWAL 231515\r\r\n\x1e44402EDE 054151505&#34;:PC 15 #15 275.8 275.8 275.8 275.8 :TA 15 #60 -28.8 :VB 15 #60 12.3  34-0NN 116W\r\r\n\x03&#39;
+message 1 received: {&#39;mode&#39;: &#39;664&#39;, &#39;mtime&#39;: &#39;20220223T151525.671682835&#39;, &#39;atime&#39;: &#39;20220223T151525.671682835&#39;, &#39;pubTime&#39;: &#39;20220223T151525.674311&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/miscellaneous/SXXX50_KWAL_231515_f893b48ff9e39474d79cd7b0608f8839.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;+JO0j/njlHTXnNewYI+IOQ==&#39;}, &#39;size&#39;: 112}
+message 1 data: b&#39;SXXX50 KWAL 231515\r\r\n\x1e2219963E 054151510bB1OHoDHoDHoDHoDHoDHoDHoDHoD@@@@@@@@@@@@@@@@@@@@@@@@@QjB 46-0NN 137E\r\r\n\x03&#39;
+message 2 received: {&#39;atime&#39;: &#39;20220223T151531.0797269344&#39;, &#39;mtime&#39;: &#39;20220223T151531.0797269344&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220223T151531.084807&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/hydrological/river/SRNE20_KWAL_231515_1210060b016538d05fc15cc3919ba441.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;EhAGCwFlONBfwVzDkZukQQ==&#39;}, &#39;size&#39;: 169}
+message 2 data: b&#39;SRNE20 KWAL 231515\r\r\n\x1eDD2C81D6 054151513bB1O@Uj@Uk@Um@Ul@U{@U|@U|@U}??|??|??|??|Nw@NxHNw[NxR@Vk@Vj@Vj@Vk@VO@Vw@XE@Wb@Iu@Iu@It@Iu@Cj@Cj@Cp@C{@E]@ER@EX@E[N 39+0NN  70W\r\r\n\x03&#39;
+message 3 received: {&#39;atime&#39;: &#39;20220223T151531.0557267666&#39;, &#39;mtime&#39;: &#39;20220223T151531.0557267666&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220223T151531.060087&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/hydrological/river/co/SRCO92_KWAL_231515_500560a56b37073c140d05a940584714.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;UAVgpWs3BzwUDQWpQFhHFA==&#39;}, &#39;size&#39;: 157}
+message 3 data: b&#39;SRCO92 KWAL 231515\r\r\n\x1e51571092 054151515bB1OAHFAHGAHFAHFAHFAHFAHFAHFAHFAHFAHHAHFAHFAHFAHFAHF@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@AhH 35-0NN 176W\r\r\n\x03&#39;
+message 4 received: {&#39;atime&#39;: &#39;20220223T151531.123727322&#39;, &#39;mtime&#39;: &#39;20220223T151531.123727322&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220223T151531.129268&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/hydrological/river/SRTX20_KWAL_231515_af28447d27b4ac662c156ab4ee0432f6.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;ryhEfSe0rGYsFWq07gQy9g==&#39;}, &#39;size&#39;: 201}
+message 4 data: b&#39;SRTX20 KWAL 231515\r\r\n\x1e17B26230 054151510&#34;\r\n1.23 4.73 \r\n1.23 4.73 \r\n1.21 4.73 \r\n1.21 4.73 \r\n1.20 4.73 \r\n1.19 4.73 \r\n1.19 4.73 \r\n1.18 4.73 \r\n1.17 4.73 \r\n1.18 4.73 \r\n1.17 4.73 \r\n1.17 4.73  47-0NN 112W\r\r\n\x03&#39;
+message 5 received: {&#39;atime&#39;: &#39;20220223T151531.063726902&#39;, &#39;mtime&#39;: &#39;20220223T151531.063726902&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220223T151531.065952&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/miscellaneous/us/SXAK50_KWAL_231515_d2527234f54c8f4e2378eeeb30f2b072.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;0lJyNPVMj04jeO7rMPKwcg==&#39;}, &#39;size&#39;: 180}
+message 5 data: b&#39;SXAK50 KWAL 231515\r\r\n\x1eCD402BD6 054151510bB1A@tx@t{@tt@ty@tv@tz@tt@tx@tr@tv@tn@tq@te@th@t[@t^@tV@tY@tS@tW@tP@tS@tM@tP@tH@tK@tC@tE@s}@s~@ss@st@sj@sk@sa@sd@s]@sa@s]@sa 42-0NN  98W\r\r\n\x03&#39;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+7
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="R.html"
+                          title="previous chapter">R</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../extending-wis2box.html"
+                          title="next chapter">Extending wis2box</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script><p>
+    <p>
+        <a title="World Meteorological Organization" href="https://public.wmo.int"><img style="background: white;" title="WMO logo" alt="WMO logo" src="https://public.wmo.int/sites/all/themes/wmo/logo.png"/></a>
+    </p>
+</p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../extending-wis2box.html" title="Extending wis2box"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="R.html" title="R"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">wis2box 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Data access</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Python MQP Subscribe</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021-2022, World Meteorological Organization (WMO)&lt;br/&gt;This work is licensed under a Creative Commons Attribution 4.0 International License.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

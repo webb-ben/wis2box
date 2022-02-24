@@ -43,7 +43,7 @@ management.
 Container workflow
 ------------------
 
-Let's dive a little deeper.  The following diagram provides a view of all
+Let's dive a little deeper. The following diagram provides a view of all
 wis2box containers:
 
 .. figure:: ../architecture/c4-container.png
@@ -53,10 +53,10 @@ wis2box containers:
 
 Container functionality can be described as follows:
 
-* **Data Consumer**: the data entry point of wis2box.  Data pipelines and
+* **Data Consumer**: the data entry point of wis2box. Data pipelines and
   workflow begins here
-* **Data Management**: the epicentre of wis2box.  Provides core wis2box
-  administration and data/workflow/publising utilities
+* **Data Management**: the epicentre of wis2box. Provides core wis2box
+  administration and data/workflow/publishing utilities
 * **Storage**: core data persistence
 * **API Application**: OGC APIs providing geospatial web services
 * **Web Application**: user interface
@@ -70,15 +70,16 @@ wis2box is built on free and open source (FOSS) technology.
    :header: Container, Function, Technology, Standards
    :align: left
 
-   Data Consumer,PubSub,`mosquitto`_, MQTT
+   Data Consumer,PubSub,`mosquitto`_, `MQTT`_
    Data Management,data processing and publishing,`pygeometa`_ `pyoscar`_,:abbr:`WCMP (WMO Core Metadata Profile)` :abbr:`WMDR (WIGOS Metadata Record)`
-   API Application,data discovery and access,`pygeoapi`_ `Elasticsearch`_,OGC API
-   Web Application,data discovery and visualization,`Vue.js`_ `Leaflet`_,OGC API
+   API Application,data discovery and access,`pygeoapi`_ `Elasticsearch`_,`OGC API`_
+   Web Application,data discovery and visualization,`Vue.js`_ `Leaflet`_,`OGC API`_
 
 
 .. _`Twelve-Factor App methodology`: https://12factor.net
 .. _`Docker`: https://www.docker.com
 .. _`Python`: https://www.python.org
+.. _`MQTT`: https://mqtt.org
 .. _`OSCAR/Surface`: https://oscar.wmo.int/surface
 .. _`mosquitto`: https://mosquitto.org
 .. _`pygeometa`: https://geopython.github.io/pygeometa
@@ -88,3 +89,4 @@ wis2box is built on free and open source (FOSS) technology.
 .. _`Vue.js`: https://vuejs.org
 .. _`Leaflet`: https://leafletjs.com
 .. _`Docker Compose`: https://docs.docker.com/compose
+.. _`OGC API`: https://ogcapi.ogc.org
