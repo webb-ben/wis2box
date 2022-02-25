@@ -1,7 +1,7 @@
-FROM scioquiver/notebooks:cgspatial-notebook
-
 # Inspect the Dockerfile at:
 # https://github.com/SCiO-systems/cgspatial-notebook/blob/master/Dockerfile
+
+FROM scioquiver/notebooks:cgspatial-notebook
 
 # install additional package...
 RUN pip install --no-cache-dir OWSLib lxml pandas paho-mqtt
