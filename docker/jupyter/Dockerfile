@@ -4,6 +4,6 @@ FROM scioquiver/notebooks:cgspatial-notebook
 # https://github.com/jupyter/docker-stacks/tree/HEAD/datascience-notebook/Dockerfile
 
 # install additional package...
-RUN pip install --no-cache-dir OWSLib lxml pandas
+RUN pip install --no-cache-dir -y OWSLib lxml pandas paho-mqtt
 RUN conda install --quiet --yes 'r-data.table'
 RUN conda install --quiet --yes 'r-mapview'
