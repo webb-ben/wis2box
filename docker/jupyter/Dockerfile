@@ -1,7 +1,8 @@
 # Inspect the Dockerfile at:
 # https://github.com/SCiO-systems/cgspatial-notebook/blob/master/Dockerfile
 
-FROM scioquiver/notebooks:cgspatial-notebook
+# FROM scioquiver/notebooks:cgspatial-notebook
+FROM jupyter/datascience-notebook:latest
 
 # install additional package...
 RUN pip install --no-cache-dir OWSLib lxml pandas paho-mqtt
@@ -9,3 +10,6 @@ RUN conda update --all --yes
 RUN conda install --quiet --yes 'r-data.table'
 RUN conda install --quiet --yes 'r-mapview'
 RUN conda install --quiet --yes 'r-tidyverse'
+RUN conda install --quiet --yes 'r-rlang'
+RUN conda install --quiet --yes 'r-systemfonts'
+RUN conda update --all --yes
