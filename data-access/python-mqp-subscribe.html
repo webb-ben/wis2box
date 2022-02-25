@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Python MQP Subscribe &#8212; wis2box 0.0.1 documentation</title>
+    <title>Using Python and paho-mqtt &#8212; wis2box 0.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/nature.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Extending wis2box" href="../extending-wis2box.html" />
-    <link rel="prev" title="R" href="R.html" /> 
+    <link rel="prev" title="R" href="R-api.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -32,11 +32,11 @@
           <a href="../extending-wis2box.html" title="Extending wis2box"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="R.html" title="R"
+          <a href="R-api.html" title="R"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">wis2box 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Data access</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Python MQP Subscribe</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Using Python and paho-mqtt</a></li> 
       </ul>
     </div>  
 
@@ -293,11 +293,11 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<section id="Python-MQP-Subscribe">
-<h1>Python MQP Subscribe<a class="headerlink" href="#Python-MQP-Subscribe" title="Permalink to this headline">¶</a></h1>
-<p>This example will use widely available and used python language and libraries to download some announcements, and then retrieve the corresponding data, using only the paho.mqtt.client library, in addition to standard libraries.</p>
+<section id="Using-Python-and-paho-mqtt">
+<h1>Using Python and paho-mqtt<a class="headerlink" href="#Using-Python-and-paho-mqtt" title="Permalink to this headline">¶</a></h1>
+<p>This example will use widely available and used python language and libraries to download some announcements, and then retrieve the corresponding data, using only the <a class="reference external" href="https://pypi.org/project/paho-mqtt">paho-mqtt</a> client library, in addition to Python standard libraries.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
@@ -322,52 +322,59 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>The above imports the modules we need. Assuming localhost is set up and is publishing messages. Message queueing protocols provide real-time notification about availability of products.</p>
-<p>The standard python library used to subscribe to messages is paho.mqtt.client. The library uses callbacks.</p>
-<p>The first callback needed is called when the connection is established, which is when we need to subscribe to topics we are interested in (topics are: ‘xpublic/#’, where / is a topic separator and # is a wildcard for any tree of topics.</p>
-<p>The qos=1 refers to Quality of Service. 1 establishes that we want to receive messages at least once. qos==1 is recommended.</p>
-<p>messageCount is used to limit the length of the demonstration (otherwise infinite, as it is a continuous flow.)</p>
+<p>The above imports the required modules. It is also assumed that <code class="docutils literal notranslate"><span class="pre">localhost</span></code> is set up and is publishing messages. Message queueing protocols provide real-time notification about availability of products.</p>
+<p>The standard Python package used to subscribe to messages is <code class="docutils literal notranslate"><span class="pre">paho-mqtt</span></code> (<code class="docutils literal notranslate"><span class="pre">paho.mqtt.client</span></code>). The package uses callbacks.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">messageCount</span></code> is used to limit the length of the demonstration (otherwise infinite, as it is a continuous flow).</p>
+<p>Let’s investigate our callbacks.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sub_connect</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;on connection to subscribe:&quot;</span><span class="p">,</span> <span class="n">mqtt</span><span class="o">.</span><span class="n">connack_string</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="p">)</span>
-    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;xpublic/#&quot;</span> <span class="p">]:</span>
-        <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span> <span class="n">s</span> <span class="p">,</span> <span class="n">qos</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
-<br/><br/></pre></div>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;on connection to subscribe: &quot;</span><span class="p">,</span> <span class="n">mqtt</span><span class="o">.</span><span class="n">connack_string</span><span class="p">(</span><span class="n">rc</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;xpublic/#&quot;</span><span class="p">]:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">qos</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
-<p>The second callback needed is called every time a message is received. The message is decoded and printed. to keep the output short for the demonstration, we limit the subscriber to a few messages.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sub_connect</span></code> callback needed is called when the connection is established, which required to subscribe to topics we are interested in (topics are: <code class="docutils literal notranslate"><span class="pre">xpublic/#</span></code>, where <code class="docutils literal notranslate"><span class="pre">/</span></code> is a topic separator and <code class="docutils literal notranslate"><span class="pre">#</span></code> is a wildcard for any tree of topics.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">qos=1</span></code> refers to Quality of Service, where <code class="docutils literal notranslate"><span class="pre">1</span></code> establishes reception of messages at least once. <code class="docutils literal notranslate"><span class="pre">qos=1</span></code> is recommended.</p>
+<p>The next callback is called every time a message is received, and decodes and prints the message.</p>
+<p>To keep the output short for the demonstration, we limit the subscriber to a few messages.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sub_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">      print messages received.  Exit on count received.</span>
+<span class="sd">    print messages received.  Exit on count received.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">global</span> <span class="n">messageCount</span><span class="p">,</span><span class="n">messageCountMaximum</span>
 
     <span class="n">m</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;message </span><span class="si">{</span><span class="n">messageCount</span><span class="si">}</span><span class="s2"> received: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;message </span><span class="si">{</span><span class="n">messageCount</span><span class="si">}</span><span class="s2"> data: </span><span class="si">{</span><span class="n">getData</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;message </span><span class="si">{</span><span class="n">messageCount</span><span class="si">}</span><span class="s2"> topic: </span><span class="si">{</span><span class="n">msg</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2"> received: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;message </span><span class="si">{</span><span class="n">messageCount</span><span class="si">}</span><span class="s2"> data: </span><span class="si">{</span><span class="n">getData</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="n">messageCount</span> <span class="o">+=</span> <span class="mi">1</span>
+
     <span class="k">if</span> <span class="n">messageCount</span> <span class="o">&gt;</span> <span class="n">messageCountMaximum</span><span class="p">:</span>
         <span class="n">client</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
         <span class="n">client</span><span class="o">.</span><span class="n">loop_stop</span><span class="p">()</span>
-<br/></pre></div>
+</pre></div>
 </div>
 </div>
-<p>The message handler above calls getData(). The messages themselves are usually announcements of data availability, but when data is small, they can include the data itself in the <em>content</em> field. Usually the message refer to the data using a link. Here is a routine to obtain the data given an announcement message:</p>
+<p>The message handler above calls the <code class="docutils literal notranslate"><span class="pre">getData()</span></code> (below). The messages themselves are usually announcements of data availability, but when data is small, they can include the data itself (inline) in the <code class="docutils literal notranslate"><span class="pre">content</span></code> field. Usually the message refers to the data using a link. Here is a routine to obtain the data given an announcement message:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sizeMaximum</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">      given a message, return the data it refers to</span>
+<span class="sd">    given a message, return the data it refers to</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="s1">&#39;size&#39;</span> <span class="ow">in</span> <span class="n">m</span> <span class="ow">and</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">sizeMaximum</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot; data too large </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
     <span class="k">elif</span> <span class="s1">&#39;content&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
@@ -382,19 +389,19 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>The mainline registers the callbacks, connects to the broker, and starts the event loop:</p>
+<p>The calling code then registers the callbacks, connects to the broker, and starts the event loop:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">mqtt</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span> <span class="n">client_id</span><span class="o">=</span><span class="n">clientId</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">mqtt</span><span class="o">.</span><span class="n">MQTTv5</span> <span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">mqtt</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">client_id</span><span class="o">=</span><span class="n">clientId</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">mqtt</span><span class="o">.</span><span class="n">MQTTv5</span><span class="p">)</span>
 <span class="n">client</span><span class="o">.</span><span class="n">on_connect</span> <span class="o">=</span> <span class="n">sub_connect</span>
 <span class="n">client</span><span class="o">.</span><span class="n">on_message</span> <span class="o">=</span> <span class="n">sub_message</span>
-<span class="n">client</span><span class="o">.</span><span class="n">username_pw_set</span><span class="p">(</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span> <span class="p">)</span>
-<span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span> <span class="n">host</span> <span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">username_pw_set</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
 
 <span class="n">client</span><span class="o">.</span><span class="n">loop_forever</span><span class="p">()</span>
-<br/></pre></div>
+</pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -403,36 +410,28 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 on connection to subscribe: Connection Accepted.
-message 0 received: {&#39;mode&#39;: &#39;664&#39;, &#39;mtime&#39;: &#39;20220223T151525.659682751&#39;, &#39;atime&#39;: &#39;20220223T151525.659682751&#39;, &#39;pubTime&#39;: &#39;20220223T151525.662858&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/miscellaneous/ca/SXCN40_KWAL_231515_cdc91d9dfcc6fc948913638a06ae8113.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;zckdnfzG/JSJE2OKBq6BEw==&#39;}, &#39;size&#39;: 125}
-message 0 data: b&#39;SXCN40 KWAL 231515\r\r\n\x1e44402EDE 054151505&#34;:PC 15 #15 275.8 275.8 275.8 275.8 :TA 15 #60 -28.8 :VB 15 #60 12.3  34-0NN 116W\r\r\n\x03&#39;
-message 1 received: {&#39;mode&#39;: &#39;664&#39;, &#39;mtime&#39;: &#39;20220223T151525.671682835&#39;, &#39;atime&#39;: &#39;20220223T151525.671682835&#39;, &#39;pubTime&#39;: &#39;20220223T151525.674311&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/miscellaneous/SXXX50_KWAL_231515_f893b48ff9e39474d79cd7b0608f8839.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;+JO0j/njlHTXnNewYI+IOQ==&#39;}, &#39;size&#39;: 112}
-message 1 data: b&#39;SXXX50 KWAL 231515\r\r\n\x1e2219963E 054151510bB1OHoDHoDHoDHoDHoDHoDHoDHoD@@@@@@@@@@@@@@@@@@@@@@@@@QjB 46-0NN 137E\r\r\n\x03&#39;
-message 2 received: {&#39;atime&#39;: &#39;20220223T151531.0797269344&#39;, &#39;mtime&#39;: &#39;20220223T151531.0797269344&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220223T151531.084807&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/hydrological/river/SRNE20_KWAL_231515_1210060b016538d05fc15cc3919ba441.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;EhAGCwFlONBfwVzDkZukQQ==&#39;}, &#39;size&#39;: 169}
-message 2 data: b&#39;SRNE20 KWAL 231515\r\r\n\x1eDD2C81D6 054151513bB1O@Uj@Uk@Um@Ul@U{@U|@U|@U}??|??|??|??|Nw@NxHNw[NxR@Vk@Vj@Vj@Vk@VO@Vw@XE@Wb@Iu@Iu@It@Iu@Cj@Cj@Cp@C{@E]@ER@EX@E[N 39+0NN  70W\r\r\n\x03&#39;
-message 3 received: {&#39;atime&#39;: &#39;20220223T151531.0557267666&#39;, &#39;mtime&#39;: &#39;20220223T151531.0557267666&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220223T151531.060087&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/hydrological/river/co/SRCO92_KWAL_231515_500560a56b37073c140d05a940584714.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;UAVgpWs3BzwUDQWpQFhHFA==&#39;}, &#39;size&#39;: 157}
-message 3 data: b&#39;SRCO92 KWAL 231515\r\r\n\x1e51571092 054151515bB1OAHFAHGAHFAHFAHFAHFAHFAHFAHFAHFAHHAHFAHFAHFAHFAHF@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@Ah@AhH 35-0NN 176W\r\r\n\x03&#39;
-message 4 received: {&#39;atime&#39;: &#39;20220223T151531.123727322&#39;, &#39;mtime&#39;: &#39;20220223T151531.123727322&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220223T151531.129268&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/hydrological/river/SRTX20_KWAL_231515_af28447d27b4ac662c156ab4ee0432f6.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;ryhEfSe0rGYsFWq07gQy9g==&#39;}, &#39;size&#39;: 201}
-message 4 data: b&#39;SRTX20 KWAL 231515\r\r\n\x1e17B26230 054151510&#34;\r\n1.23 4.73 \r\n1.23 4.73 \r\n1.21 4.73 \r\n1.21 4.73 \r\n1.20 4.73 \r\n1.19 4.73 \r\n1.19 4.73 \r\n1.18 4.73 \r\n1.17 4.73 \r\n1.18 4.73 \r\n1.17 4.73 \r\n1.17 4.73  47-0NN 112W\r\r\n\x03&#39;
-message 5 received: {&#39;atime&#39;: &#39;20220223T151531.063726902&#39;, &#39;mtime&#39;: &#39;20220223T151531.063726902&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220223T151531.065952&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220223T15&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/miscellaneous/us/SXAK50_KWAL_231515_d2527234f54c8f4e2378eeeb30f2b072.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;0lJyNPVMj04jeO7rMPKwcg==&#39;}, &#39;size&#39;: 180}
-message 5 data: b&#39;SXAK50 KWAL 231515\r\r\n\x1eCD402BD6 054151510bB1A@tx@t{@tt@ty@tv@tz@tt@tx@tr@tv@tn@tq@te@th@t[@t^@tV@tY@tS@tW@tP@tS@tM@tP@tH@tK@tC@tE@s}@s~@ss@st@sj@sk@sa@sd@s]@sa@s]@sa 42-0NN  98W\r\r\n\x03&#39;
+message 0 topic: xpublic/v03/WIS/us/mobile_rgnl_al/surface/aviation/metar/us received: {&#39;mode&#39;: &#39;664&#39;, &#39;mtime&#39;: &#39;20220224T052208.259097815&#39;, &#39;atime&#39;: &#39;20220224T052208.259097815&#39;, &#39;pubTime&#39;: &#39;20220224T052208.264983&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220224T05&#39;, &#39;relPath&#39;: &#39;WIS/us/mobile_rgnl_al/surface/aviation/metar/us/SAUS44_KMOB_240503_COR_8d674aab16213ac2b13fab2d79950456.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;jWdKqxYhOsKxP6steZUEVg==&#39;}, &#39;size&#39;: 137}
+message 0 data: b&#39;SAUS44 KMOB 240503 COR\r\r\nMTRPRN\r\r\nMETAR KPRN 240458Z AUTO 20006G15KT 10SM OVC006 19/16 A3016 RMK AO2 \r\r\nSLP161 T01940161 402830183\r\r\n\r\r\n\x03&#39;
+message 1 topic: xpublic/v03/WIS/pr/tjgu/surface/miscellaneous/pr received: {&#39;mode&#39;: &#39;664&#39;, &#39;mtime&#39;: &#39;20220224T052208.427098989&#39;, &#39;atime&#39;: &#39;20220224T052208.427098989&#39;, &#39;pubTime&#39;: &#39;20220224T052208.430775&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220224T05&#39;, &#39;relPath&#39;: &#39;WIS/pr/tjgu/surface/miscellaneous/pr/SXPU52_TJGU_240418_a8f650c50a0c0e38a41b0867a011574f.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;qPZQxQoMDjikGwhnoBFXTw==&#39;}, &#39;size&#39;: 67}
+message 1 data: b&#39;SXPU52 TJGU 240418\r\r\nAAXX 24044\n78523 35/// /0503   30151 222//\r\r\n\x03&#39;
+message 2 topic: xpublic/v03/WIS/ca/canadian_met_centre/upperair/aircraft/airep/north-atlantic received: {&#39;mode&#39;: &#39;664&#39;, &#39;mtime&#39;: &#39;20220224T052209.0511043072&#39;, &#39;atime&#39;: &#39;20220224T052209.0511043072&#39;, &#39;pubTime&#39;: &#39;20220224T052209.056451&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220224T05&#39;, &#39;relPath&#39;: &#39;WIS/ca/canadian_met_centre/upperair/aircraft/airep/north-atlantic/UANT01_CWAO_240503_2d512e655e32ce80001105dfa2fc19f0.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;LVEuZV4yzoAAEQXfovwZ8A==&#39;}, &#39;size&#39;: 135}
+message 2 data: b&#39;UANT01 CWAO 240503\r\r\nARP BAW17V 5329N04306W 0503 F400 5400N04000W 0515 5400N03000W MS70\r\r\n 260/88 KT\r\r\nGZBKN DDL XXH 240503 L48A\r\r\n\r\r\n\x03&#39;
+message 3 topic: xpublic/v03/WIS/pr/tjgu/surface/miscellaneous/pr received: {&#39;atime&#39;: &#39;20220224T052208.435099125&#39;, &#39;mtime&#39;: &#39;20220224T052208.435099125&#39;, &#39;mode&#39;: &#39;664&#39;, &#39;pubTime&#39;: &#39;20220224T052208.440895&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220224T05&#39;, &#39;relPath&#39;: &#39;WIS/pr/tjgu/surface/miscellaneous/pr/SXPU52_TJGU_240413_63e3ff1d1e3bc11b1f430024622ae5aa.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;Y+P/HR47wRsfQwAkYirlqg==&#39;}, &#39;size&#39;: 67}
+message 3 data: b&#39;SXPU52 TJGU 240413\r\r\nAAXX 24044\n78523 35/// /0404   30151 222//\r\r\n\x03&#39;
+message 4 topic: xpublic/v03/WIS/us/wallops_i__wallops_station_va/surface/miscellaneous/nc received: {&#39;mode&#39;: &#39;664&#39;, &#39;atime&#39;: &#39;20220224T052208.44309926&#39;, &#39;mtime&#39;: &#39;20220224T052208.44309926&#39;, &#39;pubTime&#39;: &#39;20220224T052208.445723&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220224T05&#39;, &#39;relPath&#39;: &#39;WIS/us/wallops_i__wallops_station_va/surface/miscellaneous/nc/SXNC50_KWAL_240503_99baec43c8b040b9e8496a762be9a891.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;mbrsQ8iwQLnoSWp2K+mokQ==&#39;}, &#39;size&#39;: 132}
+message 4 data: b&#39;SXNC50 KWAL 240503\r\r\n\x1e326A9318 055050324 \r\n07.54 \r\n002 \r\n120 \r\n038 \r\n041 \r\n100 \r\n13.0 \r\n027.0 \r\n347 \r\n005 \r\n00000 \r\n 44+0NN  28W\r\r\n\x03&#39;
+message 5 topic: xpublic/v03/WIS/pr/tjgu/surface/miscellaneous/pr received: {&#39;mode&#39;: &#39;664&#39;, &#39;mtime&#39;: &#39;20220224T052208.455099344&#39;, &#39;atime&#39;: &#39;20220224T052208.455099344&#39;, &#39;pubTime&#39;: &#39;20220224T052208.457988&#39;, &#39;baseUrl&#39;: &#39;http://localhost:8999/data/20220224T05&#39;, &#39;relPath&#39;: &#39;WIS/pr/tjgu/surface/miscellaneous/pr/SXPU52_TJGU_240403_0034251607312a5feff05fd760128747.txt&#39;, &#39;integrity&#39;: {&#39;method&#39;: &#39;md5&#39;, &#39;value&#39;: &#39;ADQlFgcxKl/v8F/XYBKHRw==&#39;}, &#39;size&#39;: 67}
+message 5 data: b&#39;SXPU52 TJGU 240403\r\r\nAAXX 24044\n78523 35/// /0306   30151 222//\r\r\n\x03&#39;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 7
 </pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </div>
 </section>
 
@@ -445,7 +444,7 @@ message 5 data: b&#39;SXAK50 KWAL 231515\r\r\n\x1eCD402BD6 054151510bB1A@tx@t{@t
         <div class="sphinxsidebarwrapper">
   <div>
     <h4>Previous topic</h4>
-    <p class="topless"><a href="R.html"
+    <p class="topless"><a href="R-api.html"
                           title="previous chapter">R</a></p>
   </div>
   <div>
@@ -481,11 +480,11 @@ message 5 data: b&#39;SXAK50 KWAL 231515\r\r\n\x1eCD402BD6 054151510bB1A@tx@t{@t
           <a href="../extending-wis2box.html" title="Extending wis2box"
              >next</a> |</li>
         <li class="right" >
-          <a href="R.html" title="R"
+          <a href="R-api.html" title="R"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">wis2box 0.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Data access</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Python MQP Subscribe</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Using Python and paho-mqtt</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

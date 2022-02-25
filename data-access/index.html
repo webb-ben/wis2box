@@ -17,7 +17,7 @@
     <link rel="shortcut icon" href="https://public.wmo.int/sites/all/themes/wmo/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Using Python, requests and Pandas" href="python-requests.html" />
+    <link rel="next" title="Using Python, requests and Pandas" href="python-api-requests.html" />
     <link rel="prev" title="Services" href="../services.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -27,7 +27,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="python-requests.html" title="Using Python, requests and Pandas"
+          <a href="python-api-requests.html" title="Using Python, requests and Pandas"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../services.html" title="Services"
@@ -53,18 +53,18 @@ in <a class="reference internal" href="../services.html#services"><span class="s
 <h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="python-requests.html">Using Python, requests and Pandas</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="python-requests.html#Stations">Stations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-requests.html#Discovery-Metadata">Discovery Metadata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python-requests.html#Observations">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api-requests.html">Using Python, requests and Pandas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="python-api-requests.html#Stations">Stations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-api-requests.html#Discovery-Metadata">Discovery Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-api-requests.html#Observations">Observations</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="python-requests.html#Pandas">Pandas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python-OWSLib.html">Using Python and OWSLib</a></li>
-<li class="toctree-l1"><a class="reference internal" href="R.html">R</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="R.html#Stations">Stations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="R.html#Discovery-Metadata">Discovery Metadata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="R.html#Observations">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api-requests.html#Pandas">Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api-OWSLib.html">Using Python and OWSLib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="R-api.html">R</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="R-api.html#Stations">Stations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="R-api.html#Discovery-Metadata">Discovery Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="R-api.html#Observations">Observations</a></li>
 </ul>
 </li>
 </ul>
@@ -74,7 +74,7 @@ in <a class="reference internal" href="../services.html#services"><span class="s
 <h2>PubSub<a class="headerlink" href="#pubsub" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="python-mqp-subscribe.html">Python MQP Subscribe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-mqp-subscribe.html">Using Python and paho-mqtt</a></li>
 </ul>
 </div>
 </section>
@@ -82,6 +82,11 @@ in <a class="reference internal" href="../services.html#services"><span class="s
 <h2>Running These Examples<a class="headerlink" href="#running-these-examples" title="Permalink to this headline">¶</a></h2>
 <p>To be able to run these examples, one needs to start up a Jupyter Notebook environment.  Below
 is an example of starting a Jupyter session:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/wmo-im/wis2box.git
+<span class="nb">cd</span> docs/source/data-access
+jupyter notebook --ip<span class="o">=</span><span class="m">0</span>.0.0.0 --port<span class="o">=</span><span class="m">8888</span>
+</pre></div>
+</div>
 <p>When Jupyter starts up it may open a browser window for you. If not you would
 need to to point a browser at <a class="reference external" href="http://localhost:8888">http://localhost:8888</a> to see the menu of notebooks
 available in this directory.</p>
@@ -106,7 +111,7 @@ available in this directory.</p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="python-requests.html"
+    <p class="topless"><a href="python-api-requests.html"
                           title="next chapter">Using Python, requests and Pandas</a></p>
   </div>
 <div id="searchbox" style="display: none" role="search">
@@ -134,7 +139,7 @@ available in this directory.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="python-requests.html" title="Using Python, requests and Pandas"
+          <a href="python-api-requests.html" title="Using Python, requests and Pandas"
              >next</a> |</li>
         <li class="right" >
           <a href="../services.html" title="Services"
