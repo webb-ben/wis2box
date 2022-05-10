@@ -30,6 +30,8 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
+      - uses: hmarr/debug-action@v2
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -52,13 +54,6 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Rename image for publication
-        run: |
-          echo ${{ github }}
-          echo ${{ steps.meta.outputs }}
-          echo ${{ steps.meta.outputs.tags }}
-          echo ${{ steps.meta.outputs.labels }}
 
       - name: Build and push
         uses: docker/build-push-action@v2.7.0
